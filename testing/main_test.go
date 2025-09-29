@@ -112,6 +112,9 @@ func startServerWithApplication(
 func getVersionFromDB(t *testing.T, db *sql.DB) *version.Version {
 	t.Helper()
 	var crdbVersion string
+	if _, err := db.Exec(`SET allow_unsafe_internals=true`); err != nil {
+		t.Fatal(err)
+	}
 	if err := db.QueryRow(
 		`SELECT value FROM crdb_internal.node_build_info where field = 'Version'`,
 	).Scan(&crdbVersion); err != nil {
